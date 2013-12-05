@@ -98,7 +98,7 @@ return a data frame. This could easily be done on one line, but I'm
 expanding it here to show the format a more complex function could take.
 
 
-```r
+```S
 set.seed(1)
 d <- data.frame(year = rep(2000:2002, each = 3), count = round(runif(9, 0, 20)))
 print(d)
@@ -120,7 +120,7 @@ print(d)
 
 
 
-```r
+```S
 library(plyr)
 ddply(d, "year", function(x) {
     mean.count <- mean(x$count)
@@ -147,7 +147,7 @@ modifies an existing data frame. `summarise` creates a new condensed data
 frame.
 
 
-```r
+```S
 ddply(d, "year", summarise, mean.count = mean(count))
 ```
 
@@ -161,7 +161,7 @@ ddply(d, "year", summarise, mean.count = mean(count))
 
 
 
-```r
+```S
 ddply(d, "year", transform, total.count = sum(count))
 ```
 
@@ -183,7 +183,7 @@ Bonus function: `mutate`. `mutate` works like `transform` but lets you
 build on columns.
 
 
-```r
+```S
 ddply(d, "year", mutate, mu = mean(count), sigma = sd(count), cv = sigma/mu)
 ```
 
@@ -209,14 +209,14 @@ underscore (`_`). This is a bit cleaner than a for loop since you don't
 have to subset the data manually.
 
 
-```r
+```S
 par(mfrow = c(1, 3), mar = c(2, 2, 1, 1), oma = c(3, 3, 0, 0))
 d_ply(d, "year", transform, plot(count, main = unique(year), type = "o"))
 mtext("count", side = 1, outer = TRUE, line = 1)
 mtext("frequency", side = 2, outer = TRUE, line = 1)
 ```
 
-![](figure/d_ply_plot.png) 
+![](figure/d_ply_plot.png)
 
 
 ## Nested chunking of the data
@@ -225,7 +225,7 @@ The basic syntax can be easily extended to break apart the data based on
 multiple columns:
 
 
-```r
+```S
 baseball.dat <- subset(baseball, year > 2000)  # data from the plyr package
 x <- ddply(baseball.dat, c("year", "team"), summarize, homeruns = sum(hr))
 head(x)
@@ -250,7 +250,7 @@ You can use the `failwith` function to control how errors are dealt
 with.
 
 
-```r
+```S
 f <- function(x) if (x == 1) stop("Error!") else 1
 safe.f <- failwith(NA, f, quiet = TRUE)
 # llply(1:2, f)
@@ -260,7 +260,7 @@ llply(1:2, safe.f)
 ```
 ## [[1]]
 ## [1] NA
-## 
+##
 ## [[2]]
 ## [1] 1
 ```
@@ -275,33 +275,33 @@ your code up to twice as fast. Simply register the cores and then set
 
 
 
-```r
+```S
 x <- c(1:10)
 wait <- function(i) Sys.sleep(0.1)
 system.time(llply(x, wait))
 ```
 
 ```
-##    user  system elapsed 
-##   0.001   0.000   1.008
+##    user  system elapsed
+##   0.001   0.001   1.007
 ```
 
 
 
 
-```r
+```S
 system.time(sapply(x, wait))
 ```
 
 ```
-##    user  system elapsed 
-##   0.001   0.000   1.010
+##    user  system elapsed
+##   0.001   0.001   1.009
 ```
 
 
 
 
-```r
+```S
 library(doParallel)
 ```
 
@@ -317,14 +317,14 @@ library(doParallel)
 ## Loading required package: parallel
 ```
 
-```r
+```S
 registerDoParallel(cores = 2)
 system.time(llply(x, wait, .parallel = TRUE))
 ```
 
 ```
-##    user  system elapsed 
-##   0.022   0.009   0.542
+##    user  system elapsed
+##   0.018   0.010   0.537
 ```
 
 
@@ -342,25 +342,25 @@ A couple faster options:
 Use a base `R` `apply` function:
 
 
-```r
+```S
 system.time(ddply(baseball, "id", summarize, length(year)))
 ```
 
 ```
-##    user  system elapsed 
-##   0.707   0.013   0.724
+##    user  system elapsed
+##   0.672   0.009   0.681
 ```
 
 
 
 
-```r
+```S
 system.time(tapply(baseball$year, baseball$id, function(x) length(x)))
 ```
 
 ```
-##    user  system elapsed 
-##   0.020   0.000   0.021
+##    user  system elapsed
+##   0.019   0.000   0.019
 ```
 
 
@@ -368,15 +368,15 @@ system.time(tapply(baseball$year, baseball$id, function(x) length(x)))
 Use the `data.table` package:
 
 
-```r
+```S
 library(data.table)
 dt <- data.table(baseball, key = "id")
 system.time(dt[, length(year), by = list(id)])
 ```
 
 ```
-##    user  system elapsed 
-##   0.007   0.000   0.009
+##    user  system elapsed
+##   0.006   0.000   0.007
 ```
 
 

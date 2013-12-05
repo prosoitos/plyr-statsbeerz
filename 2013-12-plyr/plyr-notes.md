@@ -1,11 +1,6 @@
----
-layout: post
-title: "plyr: Split-Apply-Combine for Mortals"
-subtitle: An introduction to the plyr R package.
-published: true
----
+# plyr: Split-Apply-Combine for Mortals
 
-*Along with my [earlier post](http://localhost:4000/2013/10/19/reshape.html) on the `reshape2` package, I will continue to post my course notes from Data Wrangling and Visualization in R, a graduate-level course I co-taught last semester at Simon Fraser University.*
+An introduction to the plyr R package.
 
 `plyr` is an `R` package that makes it simple to split data apart, do
 stuff to it, and mash it back together. This is a common
@@ -26,8 +21,7 @@ analysis](http://www.jstatsoft.org/v40/i01). There's quite a bit of discussion
 online in general, and especially on
 [stackoverflow.com](http://stackoverflow.com/questions/tagged/plyr).
 
-Why use `apply` functions instead of `for` loops?
-=================================================
+## Why use `apply` functions instead of `for` loops?
 
 1.  The code is cleaner (once you're familiar with the concept). The
     code can be easier to code and read, and less error prone because you
@@ -36,8 +30,7 @@ Why use `apply` functions instead of `for` loops?
 
 2.  `apply` functions can be faster than `for` loops, sometimes dramatically.
 
-`plyr` basics
-=============
+## `plyr` basics
 
 `plyr` builds on the built-in `apply` functions by giving you control
 over the input and output formats and keeping the syntax consistent
@@ -78,8 +71,7 @@ For plotting, you might find the underscore (`_`) option useful. It will
 do something with the data (say add line segments to a plot) and then
 throw away the output (e.g., `d_ply()`).
 
-Base R `apply` functions and `plyr`
-===================================
+## Base R `apply` functions and `plyr`
 
 `plyr` provides a consistent and easy-to-work-with format for `apply`
 functions with control over the input and output formats. Some of the
@@ -98,8 +90,7 @@ list               | `sapply`    | .           | `lapply`    | .
 n replicates       | `replicate` | .           | `replicate` | .
 function arguments | `mapply`    | .           | `mapply`    | .
 
-A general example with `plyr`
-=============================
+## A general example with `plyr`
 
 Let's take a simple example. We'll take a data frame, split it up by
 `year`, calculate the coefficient of variation of the `count`, and
@@ -148,8 +139,7 @@ ddply(d, "year", function(x) {
 
 
 
-`transform` and `summarise`
-===========================
+## `transform` and `summarise`
 
 It is often convenient to use these functions within one of the `**ply`
 functions. `transform` acts as it would normally as the base `R` function and
@@ -212,8 +202,7 @@ ddply(d, "year", mutate, mu = mean(count), sigma = sd(count), cv = sigma/mu)
 
 
 
-Plotting with `plyr`
-====================
+## Plotting with `plyr`
 
 You can use `plyr` to plot data by throwing away the output with an
 underscore (`_`). This is a bit cleaner than a for loop since you don't
@@ -230,8 +219,7 @@ mtext("frequency", side = 2, outer = TRUE, line = 1)
 ![](figure/d_ply_plot.png) 
 
 
-Nested chunking of the data
-===========================
+## Nested chunking of the data
 
 The basic syntax can be easily extended to break apart the data based on
 multiple columns:
@@ -254,11 +242,9 @@ head(x)
 ```
 
 
-Other useful options
-====================
+## Other useful options
 
-Dealing with errors
--------------------
+### Dealing with errors
 
 You can use the `failwith` function to control how errors are dealt
 with.
@@ -280,8 +266,7 @@ llply(1:2, safe.f)
 ```
 
 
-Parallel processing
--------------------
+### Parallel processing
 
 In conjunction with a package such as `doParallel` you can run your function
 separately on each core of your computer. On a dual core machine this make
@@ -298,7 +283,7 @@ system.time(llply(x, wait))
 
 ```
 ##    user  system elapsed 
-##   0.000   0.000   1.005
+##   0.001   0.000   1.008
 ```
 
 
@@ -310,7 +295,7 @@ system.time(sapply(x, wait))
 
 ```
 ##    user  system elapsed 
-##   0.001   0.001   1.007
+##   0.001   0.000   1.010
 ```
 
 
@@ -339,13 +324,12 @@ system.time(llply(x, wait, .parallel = TRUE))
 
 ```
 ##    user  system elapsed 
-##   0.021   0.010   0.543
+##   0.022   0.009   0.542
 ```
 
 
 
-So, why would I *not* want to use `plyr`?
-=========================================
+## So, why would I *not* want to use `plyr`?
 
 `plyr` can be slow --- particularly if you are working with very large
 datasets that involve a lot of subsetting. Hadley is working on this and
@@ -364,7 +348,7 @@ system.time(ddply(baseball, "id", summarize, length(year)))
 
 ```
 ##    user  system elapsed 
-##   0.689   0.011   0.708
+##   0.707   0.013   0.724
 ```
 
 
@@ -376,7 +360,7 @@ system.time(tapply(baseball$year, baseball$id, function(x) length(x)))
 
 ```
 ##    user  system elapsed 
-##   0.025   0.000   0.026
+##   0.020   0.000   0.021
 ```
 
 
@@ -392,7 +376,7 @@ system.time(dt[, length(year), by = list(id)])
 
 ```
 ##    user  system elapsed 
-##   0.008   0.000   0.008
+##   0.007   0.000   0.009
 ```
 
 

@@ -17,7 +17,7 @@ We're going to work with morphological data from Galapagos finches, which is ava
 First, load the plyr package:
 
 
-```r
+```S
 library(plyr)
 ```
 
@@ -25,7 +25,7 @@ library(plyr)
 I've taken the data and cleaned it up a bit for this exercise. I've removed some columns and made the column names lower case. I've also removed all but one island. You can do that with this code:
 
 
-```r
+```S
 morph <- read.csv("Morph_for_Sato.csv")
 names(morph) <- tolower(names(morph))  # make columns names lowercase
 morph <- subset(morph, islandid == "Flor_Chrl")  # take only one island
@@ -42,7 +42,7 @@ row.names(morph) <- NULL  # tidy up the row names
 Take a look at the data. There are columns for taxon, sex, wing length, beak height, and upper beak length:
 
 
-```r
+```S
 head(morph)
 str(morph)
 ```
@@ -53,7 +53,7 @@ str(morph)
 Let's calculate the mean wing length for each taxon:
 
 
-```r
+```S
 ddply(morph, "taxon", summarize, mean_wingl = mean(wingl))
 ```
 
@@ -78,7 +78,7 @@ ddply(morph, "taxon", summarize, mean_wingl = mean(wingl))
 We can extend that syntax to multiple grouping columns and multiple summary columns. For example, calculate the mean and standard deviation of wing length for each taxon-sex combination:
 
 
-```r
+```S
 ddply(morph, c("taxon", "sex"), summarize, mean_wingl = mean(wingl), sd_wingl = sd(wingl))
 ```
 
@@ -113,7 +113,7 @@ ddply(morph, c("taxon", "sex"), summarize, mean_wingl = mean(wingl), sd_wingl = 
 We can, of course, do much more than just take means and variances! The `cor()` function computes the correlation between two vectors of numbers. If you're not familiar with the `cor()` function, first bring up the help file with `?cor`. Then, on your own, try calculating the correlation between wing length and beak height for each taxon.
 
 
-```r
+```S
 ddply(morph, "taxon", summarize, r = cor(wingl, beakh))
 ```
 
@@ -138,8 +138,15 @@ ddply(morph, "taxon", summarize, r = cor(wingl, beakh))
 It's always good to plot the data [to understand what's going on](http://en.wikipedia.org/wiki/Anscombe's_quartet). Although this is outside of today's scope, we can do that quickly with ggplot2 like this:
 
 
-```r
+```S
 library(ggplot2)
+```
+
+```
+## Loading required package: methods
+```
+
+```S
 ggplot(morph, aes(beakh, wingl)) + geom_point(aes(colour = sex)) + facet_wrap(~taxon)
 ```
 
@@ -151,7 +158,7 @@ OK, now let's try using the `transform()` function with plyr. Whereas summarize 
 Let's try scaling the wing length and beak height data within each taxon using the `scale()` function. Assign the new data frame to an object named `morph_scaled` and call the new columns `scaled_beakh` and `scaled_wingl`.
 
 
-```r
+```S
 morph_scaled <- ddply(morph, "taxon", transform, scaled_beakh = scale(beakh), 
     scaled_wingl = scale(wingl))
 head(morph_scaled)
@@ -173,7 +180,7 @@ How does this compare to the output from a `ddply()` call with `summarize()`?
 Run this code to look at the output. How does this compare to the previous plot? When might you use this?
 
 
-```r
+```S
 library(ggplot2)
 ggplot(morph_scaled, aes(scaled_beakh, scaled_wingl)) + geom_point(aes(colour = sex)) + 
     facet_wrap(~taxon)
@@ -185,7 +192,7 @@ ggplot(morph_scaled, aes(scaled_beakh, scaled_wingl)) + geom_point(aes(colour = 
 One more thing. You can easily pass additional arguments within plyr. For example, if we used the original dataset before we removed NA values and we wanted to take the mean, we can do that by adding `na.rm = TRUE`. Remember that the data frame `morph_orig` contains the original dataset. Try taking the mean wing length for each taxon and removing NAs in one step.
 
 
-```r
+```S
 # the original code:
 ddply(morph_orig, "taxon", summarize, mean_wingl = mean(wingl))
 ```
@@ -211,7 +218,7 @@ ddply(morph_orig, "taxon", summarize, mean_wingl = mean(wingl))
 ## 17           Platyspiza crassirostris         NA
 ```
 
-```r
+```S
 ddply(morph_orig, "taxon", summarize, mean_wingl = mean(wingl, na.rm = TRUE))
 ```
 
@@ -245,7 +252,7 @@ ddply(morph_orig, "taxon", summarize, mean_wingl = mean(wingl, na.rm = TRUE))
 Just to make sure everyone's on the same page, let's write a simple function that takes two numbers and adds them together. Then run it once:
 
 
-```r
+```S
 my_sum <- function(x, y) {
     output <- x + y
     output
@@ -263,7 +270,7 @@ OK, now we're going to work towards running a linear model on wing length and be
 First, let's try returning a linear model for each taxon. We can store the output in a list and use `dlply`. We'll call the output `morph_lm`.
 
 
-```r
+```S
 morph_lm <- dlply(morph, "taxon", function(x) {
     lm(beakh ~ wingl, data = x)
 })
@@ -272,7 +279,7 @@ morph_lm <- dlply(morph, "taxon", function(x) {
 
 Let's look at some of that output:
 
-```r
+```S
 morph_lm[[1]]
 ```
 
@@ -286,7 +293,7 @@ morph_lm[[1]]
 ##      4.7201       0.0436
 ```
 
-```r
+```S
 morph_lm[[2]]
 ```
 
@@ -304,7 +311,7 @@ morph_lm[[2]]
 OK, now let's work through those linear models and grab the slope and standard error. Note that we're starting with a list and want to return a data frame.
 
 
-```r
+```S
 ldply(morph_lm, function(x) {
     slope <- summary(x)$coef[1, 2]
     se <- summary(x)$coef[2, 2]
@@ -333,7 +340,7 @@ ldply(morph_lm, function(x) {
 Note that we don't have to write our function inline. This is especially helpful for longer functions. For example, let's re-write the previous code chunk without an inline function.
 
 
-```r
+```S
 get_lm_stats <- function(x) {
     slope <- summary(x)$coef[1, 2]
     se <- summary(x)$coef[2, 2]
@@ -365,7 +372,7 @@ Note that we could have done all of that in one `ddply()` step. We did it in two
 Your turn: can you re-write what we just did in one call to `ddply()`?
 
 
-```r
+```S
 ddply(morph, "taxon", function(x) {
     m <- lm(beakh ~ wingl, data = x)
     slope <- summary(m)$coef[1, 2]
@@ -397,7 +404,7 @@ ddply(morph, "taxon", function(x) {
 We're going to try debugging a custom function with `browser()`. Something is wrong with the following simple function. Let's find it:
 
 
-```r
+```S
 morph_ci <- ddply(morph, "taxon", function(x) {
     m <- lm(beakh ~ wingl, data = x)
     ci <- confint(m)[2, 3]
@@ -415,26 +422,26 @@ morph_ci <- ddply(morph, "taxon", function(x) {
 plyr can be useful for simulations. We're going to work with a trivial example here. Let's simulate 10 values from a normal distribution with mean zero and standard deviation 1 through 4.
 
 
-```r
+```S
 llply(1:4, function(x) rnorm(10, 0, sd = x))
 ```
 
 ```
 ## [[1]]
-##  [1]  0.2311  0.2244 -0.0474 -0.1764  0.3919  0.7401  0.8764 -1.0544
-##  [9]  1.5138 -1.2850
+##  [1] -0.1052 -0.2720 -1.1488  0.6696 -0.2523 -0.3796 -1.7480  1.2844
+##  [9] -0.8342 -0.3831
 ## 
 ## [[2]]
-##  [1]  0.35645 -0.91012  0.07421 -0.79584  0.97091 -0.06937 -1.91502
-##  [8] -0.60944  0.19420 -0.62915
+##  [1]  0.07957 -2.72246  0.77890 -2.92047 -1.60570  2.18711  2.53916
+##  [8] -2.62116  3.51537  0.39786
 ## 
 ## [[3]]
-##  [1]  2.3075  3.7408 -1.4679  2.7180 -4.1915 -4.0557  1.4581 -2.2165
-##  [9]  0.5429 -2.2177
+##  [1] -1.5295 -1.5883 -0.4100 -0.8041  1.7898 -5.3934  1.7182 -1.1132
+##  [9] -0.9152  2.0993
 ## 
 ## [[4]]
-##  [1] -3.1399 -1.2635 -1.2237  1.2727 -0.4251 -0.9166  0.5381  4.4942
-##  [9]  1.1421 -1.1864
+##  [1]  8.6631 -4.1991  3.0358 -0.2436  2.5803  4.9236  0.6305 -2.2154
+##  [9] -7.6198  5.7998
 ```
 
 
@@ -442,7 +449,7 @@ We can also use plyr for replication. Let's generate 10 values from a standard n
 
 
 
-```r
+```S
 out <- raply(20, function(x) {
     temp <- rnorm(10, 0, 1)
     mean(temp)
@@ -456,8 +463,23 @@ hist(out)
 plyr makes parallel processing easy. Let's try the last example with and without parallel processing. We'll generate many more values (1e5) so we can see the difference and repeat the process 400 times. We'll use `laply` instead of `raply` because the replicate option does not have the parallel option built in.
 
 
-```r
+```S
 library(doParallel)
+```
+
+```
+## Loading required package: foreach
+```
+
+```
+## Loading required package: iterators
+```
+
+```
+## Loading required package: parallel
+```
+
+```S
 registerDoParallel(cores = 4)
 system.time(out <- laply(1:400, function(x) {
     temp <- rnorm(1e+05, 0, 1)
@@ -467,10 +489,10 @@ system.time(out <- laply(1:400, function(x) {
 
 ```
 ##    user  system elapsed 
-##   4.222   0.177   4.431
+##   4.104   0.048   4.152
 ```
 
-```r
+```S
 system.time(out <- laply(1:400, function(x) {
     temp <- rnorm(1e+05, 0, 1)
     mean(temp)
@@ -479,7 +501,7 @@ system.time(out <- laply(1:400, function(x) {
 
 ```
 ##    user  system elapsed 
-##   9.847   0.488   2.155
+##   5.259   0.340   2.051
 ```
 
 
@@ -490,43 +512,43 @@ plyr has an `m` option for taking in multiple inputs. This is similar to `mapply
 By multiple argument passing, I mean that you can pass multiple arguments from, say, a data frame to your function. Let's work with a simple example based off the one in `?mdply`.
 
 
-```r
+```S
 my_input <- data.frame(m = 1:5, sd = 1:5)
 mdply(my_input, as.data.frame(rnorm), n = 2)
 ```
 
 ```
 ##    m sd    value
-## 1  1  1  1.90477
-## 2  1  1  1.73313
-## 3  2  2  2.30604
-## 4  2  2  0.49832
-## 5  3  3  4.55033
-## 6  3  3  6.29879
-## 7  4  4 -0.06501
-## 8  4  4 12.08575
-## 9  5  5 -0.81454
-## 10 5  5  9.75774
+## 1  1  1  0.55487
+## 2  1  1  2.28636
+## 3  2  2 -0.06983
+## 4  2  2  2.87580
+## 5  3  3  2.48375
+## 6  3  3  6.59215
+## 7  4  4  0.61305
+## 8  4  4 14.37854
+## 9  5  5  4.39600
+## 10 5  5  7.61576
 ```
 
 
 This is an example of where `expand.grid()` is often useful. For example, try using `expand.grid()` around the `my_input` data frame and re-running the same code:
 
 
-```r
+```S
 my_input <- expand.grid(data.frame(m = 1:5, sd = 1:5))
 out <- mdply(my_input, as.data.frame(rnorm), n = 3)
 head(out)
 ```
 
 ```
-##   m sd   value
-## 1 1  1  2.2535
-## 2 1  1  2.3907
-## 3 1  1 -0.1985
-## 4 2  1  2.3581
-## 5 2  1  3.5823
-## 6 2  1  1.9438
+##   m sd    value
+## 1 1  1 -0.02895
+## 2 1  1 -0.18473
+## 3 1  1  0.41293
+## 4 2  1  3.15761
+## 5 2  1  2.15632
+## 6 2  1  1.46451
 ```
 
 
@@ -543,7 +565,7 @@ These bits of code are borrowed from the dplyr [introduction.Rmd](https://github
 First we'll unload plyr and load dplyr. The example uses a massive dataset of all flights departing Houston airports in 2011.
 
 
-```r
+```S
 detach(package:plyr)  # you can't (yet) have plyr loaded at the same time!
 library(dplyr)
 dim(hflights)
@@ -554,7 +576,7 @@ head(hflights)
 Create a data frame of class `tble`. This is just a data frame with some smarter printing characteristics for big datasets.
 
 
-```r
+```S
 hflights_df <- tbl_df(hflights)
 hflights_df
 ```
@@ -563,7 +585,7 @@ hflights_df
 Filter is similar to `subset()`.
 
 
-```r
+```S
 filter(hflights_df, Month == 1, DayofMonth == 1)
 ```
 
@@ -571,7 +593,7 @@ filter(hflights_df, Month == 1, DayofMonth == 1)
 `select()` is an easier way of selecting columns:
 
 
-```r
+```S
 select(hflights_df, Year, Month, DayOfWeek)
 select(hflights_df, Year:DayOfWeek)
 select(hflights_df, -(Year:DayOfWeek))
@@ -581,7 +603,7 @@ select(hflights_df, -(Year:DayOfWeek))
 `group_by` combined with `summarise()` is the equivalent of `ddply()` and `do()` is the equivalent of `dlply()`.
 
 
-```r
+```S
 planes <- group_by(hflights_df, TailNum)
 delay <- summarise(planes, count = n(), dist = mean(Distance, na.rm = TRUE), 
     delay = mean(ArrDelay, na.rm = TRUE))

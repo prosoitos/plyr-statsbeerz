@@ -1,6 +1,6 @@
 # plyr exercises
 
-Exercises written by Sean C. Anderson, <sean@seananderson.ca>
+Exercises written by Sean C. Anderson, sean "at" seananderson.ca
 
 For a Stats Beerz / Earth2Ocean workshop on December 10, 2013
 

@@ -235,8 +235,7 @@ head(out)
 The following code will only work if you have dplyr installed from source.
 See <https://github.com/hadley/dplyr>
 
-For detailed instructions on installing it on OS X see:
-See <http://seananderson.ca/2013/11/18/rcpp-mavericks.html>
+For detailed instructions on installing it on OS X see: <http://seananderson.ca/2013/11/18/rcpp-mavericks.html>
 
 These bits of code are borrowed from the dplyr [introduction.Rmd](https://github.com/hadley/dplyr/blob/master/vignettes/introduction.Rmd) vignette.
 

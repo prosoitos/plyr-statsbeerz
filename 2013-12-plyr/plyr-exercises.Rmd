@@ -192,8 +192,7 @@ This is an example of where `expand.grid()` is often useful. For example, try us
 The following code will only work if you have dplyr installed from source.
 See <https://github.com/hadley/dplyr>
 
-For detailed instructions on installing it on OS X see:
-See <http://seananderson.ca/2013/11/18/rcpp-mavericks.html>
+For detailed instructions on installing it on OS X see: <http://seananderson.ca/2013/11/18/rcpp-mavericks.html>
 
 These bits of code are borrowed from the dplyr [introduction.Rmd](https://github.com/hadley/dplyr/blob/master/vignettes/introduction.Rmd) vignette.
 
@@ -227,7 +226,7 @@ select(hflights_df, Year:DayOfWeek)
 select(hflights_df, -(Year:DayOfWeek))
 ```
 
-`group_by` is the equivalent of `ddply()` and `do()` is the equivalent of `dlply()`.
+`group_by` combined with `summarise()` is the equivalent of `ddply()` and `do()` is the equivalent of `dlply()`.
 
 ```{r, eval=FALSE}
 planes <- group_by(hflights_df, TailNum)

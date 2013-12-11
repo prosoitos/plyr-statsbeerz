@@ -216,7 +216,7 @@ mtext("count", side = 1, outer = TRUE, line = 1)
 mtext("frequency", side = 2, outer = TRUE, line = 1)
 ```
 
-![](figure/d_ply_plot.png)
+![](figure/d_ply_plot.png) 
 
 
 ## Nested chunking of the data
@@ -260,7 +260,7 @@ llply(1:2, safe.f)
 ```
 ## [[1]]
 ## [1] NA
-##
+## 
 ## [[2]]
 ## [1] 1
 ```
@@ -282,8 +282,8 @@ system.time(llply(x, wait))
 ```
 
 ```
-##    user  system elapsed
-##   0.001   0.001   1.007
+##    user  system elapsed 
+##   0.000   0.001   1.010
 ```
 
 
@@ -294,8 +294,8 @@ system.time(sapply(x, wait))
 ```
 
 ```
-##    user  system elapsed
-##   0.001   0.001   1.009
+##    user  system elapsed 
+##   0.001   0.001   1.008
 ```
 
 
@@ -323,8 +323,8 @@ system.time(llply(x, wait, .parallel = TRUE))
 ```
 
 ```
-##    user  system elapsed
-##   0.018   0.010   0.537
+##    user  system elapsed 
+##   0.018   0.008   0.534
 ```
 
 
@@ -347,8 +347,8 @@ system.time(ddply(baseball, "id", summarize, length(year)))
 ```
 
 ```
-##    user  system elapsed
-##   0.672   0.009   0.681
+##    user  system elapsed 
+##   0.634   0.007   0.642
 ```
 
 
@@ -359,8 +359,8 @@ system.time(tapply(baseball$year, baseball$id, function(x) length(x)))
 ```
 
 ```
-##    user  system elapsed
-##   0.019   0.000   0.019
+##    user  system elapsed 
+##   0.015   0.001   0.016
 ```
 
 
@@ -375,8 +375,8 @@ system.time(dt[, length(year), by = list(id)])
 ```
 
 ```
-##    user  system elapsed
-##   0.006   0.000   0.007
+##    user  system elapsed 
+##   0.006   0.000   0.006
 ```
 
 

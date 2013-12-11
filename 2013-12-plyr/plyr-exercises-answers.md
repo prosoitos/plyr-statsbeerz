@@ -578,7 +578,7 @@ select(hflights_df, -(Year:DayOfWeek))
 ```
 
 
-`group_by` is the equivalent of `ddply()` and `do()` is the equivalent of `dlply()`.
+`group_by` combined with `summarise()` is the equivalent of `ddply()` and `do()` is the equivalent of `dlply()`.
 
 
 ```r
